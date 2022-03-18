@@ -1,1 +1,69 @@
 # DynamoDB
+
+DynamoDB is highly available NoSQL database service provided by Amazon since 2012. Because DynamoDB runs on AWS, AWS handles scaling, availability and updates for its customers. As a result, DynamoDB users don’t need to worry about managing infrastructure. 
+
+While you need AWS account to use Amazon DynamoDB as a web service, you can download a local version of DynamoDB. This is an ideal option if you're just starting out with DynamoDB or want to first develop and test your application without incurring any costs. However, you will need DynamoDB web service to deploy your application in production.
+
+## Installation 
+
+There are 2 options to install DynamoDB locally - either through **direct download** or through **Docker**. Here, I explain how to start DynamoDB by using container but if you want to use direct download option, please refer to the following [documentation page](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html).
+
+1. Download and install [Docker Desktop](https://www.docker.com/products/docker-desktop)
+2. Create a `docker-compose.yml` with following information (or download it from this repo):
+
+```
+version: '3.8'
+services:
+  dynamodb-local:
+    command: "-jar DynamoDBLocal.jar -sharedDb -dbPath ./data"
+    image: "amazon/dynamodb-local:latest"
+    container_name: dynamodb-local
+    ports:
+      - "8000:8000"
+    volumes:
+      - "./docker/dynamodb:/home/dynamodblocal/data"
+    working_dir: /home/dynamodblocal
+```
+Compose is a tool for defining and running multi-container Docker applications. Here, however, we configure just one container. If you want to connect your app with DynamoDB, please refer to [this documentation page](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html).
+
+So what does `docker-compose.yml` do? Basically, it downloads a container image for a DynamoDB local version, calls it dynamodb-local and runs this service  on port 8000 both on our local machine and inside container. It also attaches a local volume to our container such that every table that is created locally (./docker/dynamodb) is automatically copied over to /home/dynamodblocal/data inside container.
+
+Now to start DynamoDB container we just need to run one command:
+
+`docker-compose up`
+
+## Getting Started 
+
+There are several ways how you can work with DynamoDB locally - either by using AWS CLI or AWS SDKs. The latter option is currently available for Java, JavaScript, Node.js, .NET, PHP, Python, Ruby, C++, Go, Android and iOS. 
+
+In the following, I will explain how to get started in two ways 1) by using **AWS CLI** and 2) through **Python SDK** as these are the most familiar to me.
+
+
+### Installing AWS CLI
+
+To be able to run DynamoDB commands in the terminal, we first need to install AWS command line interface (CLI). 
+
+**To install AWS CLI on MacOS** assuming that you have sudo permissions, run the following commands:
+
+```
+curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+sudo installer -pkg AWSCLIV2.pkg -target /
+aws --version
+```
+The first line uses curl utility to download the package and -o option specifies the destination file name. The second line installs the AWSCLIV2.pkg package. The final line just verifies whether AWS CLI was installed successfully.
+
+If you have a different OS, please refer to [this documentation page](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html).
+
+### Sample AWS CLI commands to work with DynamoDB 
+
+
+
+**NOTE:** To access DynamoDB running locally, use the --endpoint-url parameter. Otherwise you get `AccessDeniedException` because aws tries to access a web service.
+
+
+## References
+[Deploying DynamoDB Locally on Your Computer](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.DownloadingAndRunning.html)
+
+[Installing or updating the latest version of the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html)
+
+
